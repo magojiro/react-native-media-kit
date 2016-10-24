@@ -5,11 +5,15 @@ import ReactNative, {
   View,
   NativeModules,
   requireNativeComponent,
-  Image
+  Image,
+  Dimensions
 } from 'react-native';
 
 import Controls from './Controls';
 
+
+const screenHeight = Dimensions.get('window').height;
+const screenWidth = Dimensions.get('window').width;
 const UIManager = NativeModules.UIManager;
 const RCT_MEDIA_PLAYER_VIEW_REF = "RCTMediaPlayerView";
 const RCTMediaPlayerView = requireNativeComponent('RCTMediaPlayerView', {
@@ -49,6 +53,8 @@ export default class MediaPlayerView extends React.Component {
 
   constructor(props) {
     super(props);
+    
+
     this.state = {
       buffering: false,
       playing: false,
@@ -58,8 +64,8 @@ export default class MediaPlayerView extends React.Component {
       width: 0,
       height: 0,
       showPoster: true
-
     };
+    debugger;
   }
 
   componentWillUnmount() {
@@ -100,11 +106,12 @@ export default class MediaPlayerView extends React.Component {
               this.play();
             }
           }}
+          onOrientationChange={this.onOrientationChange}
           bufferRanges={this.state.bufferRanges}
         />
       );
     }
-
+    debugger;
     return (
       <View
         style={this.props.style}

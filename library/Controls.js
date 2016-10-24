@@ -12,9 +12,13 @@ import ReactNative, {
   Image,
   Platform,
   ActivityIndicator,
+  Animated,
+  Easing
 } from 'react-native';
 
 import Slider from '@ldn0x7dc/react-native-slider';
+import Orientation from 'react-native-orientation';
+import {Actions} from 'react-native-router-flux';
 
 /**
  * format as --:-- or --:--:--
@@ -65,10 +69,27 @@ export default class Controls extends React.Component {
 
   constructor(props) {
     super(props);
+    this.onTogglePlayAnimated = this.onTogglePlayAnimated.bind(this);
+
     this.state = {
       sliding: false,
       current: this.props.current,
+      playAnimated: new Animated.Value(0),
+      topAnimated: new Animated.Value(0),
+      isOrientH: false,
     };
+    debugger;
+  }
+
+  onTogglePlayAnimated() {
+    let value = this.state.playAnimated._value!=0 ? 0 : -50;
+    Animated.timing(this.state.playAnimated,{
+        toValue:value,duration:200,easing:Easing.linear
+      }).start();
+
+    Animated.timing(this.state.topAnimated,{
+        toValue:value+10,duration:200,easing:Easing.linear
+      }).start();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -113,14 +134,18 @@ export default class Controls extends React.Component {
         style: {backgroundColor: 'white'}
       }
     );
-
-
+    debugger;
     return (
       <View
         style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
         {bufferIndicator}
-        <View
-          style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: 40, backgroundColor: '#00000033', flexDirection: 'row'}}>
+        <TouchableOpacity onPress={this.onTogglePlayAnimated} style={{position: 'absolute', left: 0, right: 0, top: 0, height: 250, backgroundColor: 'rgba(0,0,0,0)',flexDirection: 'row'}}>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>{if(this.state.isOrientH){Orientation.lockToPortrait();}else{Actions.pop();setTimeout(()=>{Actions.refresh();},10)}this.state.isOrientH=!this.state.isOrientH;}} style={{position: 'absolute', left: 0, right: 0, top: this.state.topAnimated, height: 40, backgroundColor: 'rgba(0,0,0,1)',flexDirection: 'row'}}>
+          <Image source={require('./img/back.png')} style={{marginTop:5,marginLeft:5,width:20,height:20}}></Image>
+        </TouchableOpacity>
+        <Animated.View
+          style={{position: 'absolute', left: 0, right: 0, bottom: this.state.playAnimated, height: 40, backgroundColor: '#00000033', flexDirection: 'row'}}>
 
           <TouchableOpacity
             onPress={this.props.onPauseOrPlay}
@@ -165,7 +190,12 @@ export default class Controls extends React.Component {
             style={{alignSelf: 'center', fontSize: 12, color: 'white', width: totalFormated.length == 5 ? 35:56, marginRight: 10}}>
             {totalFormated}
           </Text>
-        </View>
+
+          <TouchableOpacity style={{alignSelf: 'center',marginRight: 10}}  onPress={()=>{if(this.state.isOrientH){Orientation.lockToPortrait();}else{Orientation.lockToLandscapeLeft();}this.state.isOrientH=!this.state.isOrientH;}} >
+            <Image style={{width:15,height:15}} source={this.state.isOrientH? require('./img/fullscreen_exit.png'):require('./img/fullscreen_enter.png')}></Image>
+          </TouchableOpacity>
+
+        </Animated.View>
 
       </View>
     );
