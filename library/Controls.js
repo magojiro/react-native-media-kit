@@ -20,6 +20,10 @@ import Slider from '@ldn0x7dc/react-native-slider';
 import Orientation from 'react-native-orientation';
 import {Actions} from 'react-native-router-flux';
 
+
+const IsIOS = Platform.OS === 'ios';
+const topSpace = IsIOS ? 20:5;
+
 /**
  * format as --:-- or --:--:--
  * @param timeSec
@@ -78,7 +82,7 @@ export default class Controls extends React.Component {
       topAnimated: new Animated.Value(0),
       isOrientH: false,
     };
-    debugger;
+    
   }
 
   onTogglePlayAnimated() {
@@ -134,7 +138,7 @@ export default class Controls extends React.Component {
         style: {backgroundColor: 'white'}
       }
     );
-    debugger;
+    
     return (
       <View
         style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
@@ -142,7 +146,7 @@ export default class Controls extends React.Component {
         <TouchableOpacity onPress={this.onTogglePlayAnimated} style={{position: 'absolute', left: 0, right: 0, top: 0, height: 250, backgroundColor: 'rgba(0,0,0,0)',flexDirection: 'row'}}>
         </TouchableOpacity>
         <TouchableOpacity onPress={()=>{if(this.state.isOrientH){Orientation.lockToPortrait();}else{Actions.pop();setTimeout(()=>{Actions.refresh();},10)}this.state.isOrientH=!this.state.isOrientH;}} style={{position: 'absolute', left: 0, right: 0, top: this.state.topAnimated, height: 40, backgroundColor: 'rgba(0,0,0,1)',flexDirection: 'row'}}>
-          <Image source={require('./img/back.png')} style={{marginTop:5,marginLeft:5,width:20,height:20}}></Image>
+          <Image source={require('./img/back.png')} style={{marginTop:topSpace,marginLeft:5,width:20,height:20}}></Image>
         </TouchableOpacity>
         <Animated.View
           style={{position: 'absolute', left: 0, right: 0, bottom: this.state.playAnimated, height: 40, backgroundColor: '#00000033', flexDirection: 'row'}}>
